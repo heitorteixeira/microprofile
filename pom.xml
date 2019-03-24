@@ -4,17 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.heitor</groupId>
 	<artifactId>microprofile</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<name>microprofile</name>
 	<packaging>war</packaging>
 
 	<properties>
 		<app.name>library</app.name>
-		<package.file>${project.build.directory}/${app.name}-service.jar</package.file>
-		<packaging.type>runnable</packaging.type>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<failOnMissingWebXml>false</failOnMissingWebXml>
+		<tomee.version>8.0.0-M1</tomee.version>
 		<microprofile.version>2.1</microprofile.version>
-		<liberty-maven-plugin.version>2.1.2</liberty-maven-plugin.version>
-		<openliberty-runtime.version>17.0.0.4</openliberty-runtime.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
    		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
@@ -27,62 +26,51 @@
 			<scope>provided</scope>
 			<type>pom</type>
 		</dependency>
+		<dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>8.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>openejb-cxf-rs</artifactId>
+            <version>${tomee.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <version>1.0.3.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>arquillian-tomee-remote</artifactId>
+            <version>${tomee.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>apache-tomee</artifactId>
+            <version>${tomee.version}</version>
+            <type>zip</type>
+            <classifier>microprofile</classifier>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<packagingExcludes>pom.xml</packagingExcludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>net.wasdev.wlp.maven.plugins</groupId>
-				<artifactId>liberty-maven-plugin</artifactId>
-				<version>${liberty-maven-plugin.version}</version>
-				<configuration>
-					<assemblyArtifact>
-						<groupId>io.openliberty</groupId>
-						<artifactId>openliberty-runtime</artifactId>
-						<version>${openliberty-runtime.version}</version>
-						<type>zip</type>
-					</assemblyArtifact>
-					<configFile>${basedir}/src/main/liberty/config/server.xml</configFile>
-					<packageFile>${package.file}</packageFile>
-					<include>${packaging.type}</include>
-					<looseApplication>false</looseApplication>
-					<installAppPackages>project</installAppPackages>
-					<bootstrapProperties>
-						<app.context.root>/</app.context.root>
-						<app.location>${project.artifactId}-${project.version}.war</app.location>
-						<default.http.port>9080</default.http.port>
-						<default.https.port>9443</default.https.port>
-					</bootstrapProperties>
-				</configuration>
-				<executions>
-					<execution>
-						<id>install-server</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>install-server</goal>
-							<goal>create-server</goal>
-							<goal>install-feature</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>package-server-with-apps</id>
-						<phase>package</phase>
-						<goals>
-							<goal>install-apps</goal>
-							<goal>package-server</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.tomee.maven</groupId>
+                <artifactId>tomee-maven-plugin</artifactId>
+                <version>${tomee.version}</version>
+                <configuration>
+                    <tomeeClassifier>microprofile</tomeeClassifier>
+                    <context>${artifactId}</context>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
-
-
 </project>

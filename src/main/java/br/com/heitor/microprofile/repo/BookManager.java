@@ -51,4 +51,8 @@ public class BookManager {
 		books.addAll(inMemoryStore.values());
 		return books;
 	}
+
+	public void delete(Book book) {
+		inMemoryStore.remove(book.getId(), book);
+	}
 }
